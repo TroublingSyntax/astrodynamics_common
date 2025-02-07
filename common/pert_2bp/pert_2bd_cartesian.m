@@ -1,4 +1,4 @@
-function vect_xdot = pert_2bd_cartesian(~,vect_x,args)
+function vect_xdot = pert_2bd_cartesian(t,vect_x,args)
 %PERT_2BD_CARTESIAN 1st order perturbed 2BP state function.
 %   This function can be passed into ode89 as a function handle
 %   to be solved in a cartesian state representation. It expects:
@@ -6,7 +6,7 @@ function vect_xdot = pert_2bd_cartesian(~,vect_x,args)
 %   cartesian state vector x
 
 arguments
-    ~
+    t
     vect_x
     args.mu
     args.drag = "off"
@@ -33,6 +33,11 @@ args.j2_params(5:7) = vect_r;
 args.body_params(2:4) = vect_r;
 
 args.drag_params = [args.drag_params; vect_v; rmag];
+
+n = 0.00088233532457904;
+
+s = vect_r - args.srp_params(3)*([cos(n*t) sin(n*t) 0]');
+args.srp_params(4:6) = s/norm(s);
 
 vect_f0  = [vect_v; (-args.mu/(rmag^3))*vect_r]; % 2 body dynamics
 B   = [zeros(3); eye(3)]; % mapping of perturbation into state
